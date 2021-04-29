@@ -10,7 +10,7 @@ const uri = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    playground: {endpoint: 'http://localhost:3000/graphql'}
+    playground: {endpoint: 'http://localhost:5000/graphql'}
 })
 // Connect to the MongoDB cluster
 mongoose.connect(
@@ -23,8 +23,8 @@ mongoose.connect(
     },
 )
     .then( () => {
-        server.listen({ port: 3000 })
-            .then(() => console.log('Your Apollo Server is running on port 3000'))
+        server.listen({ port: 5000 })
+            .then(() => console.log('Your Apollo Server is running on port 5000'))
     })
     .catch( () => {
         console.log('Error while connecting to MongoDB');
