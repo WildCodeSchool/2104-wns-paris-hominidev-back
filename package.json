@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && nodemon src/index.js ",
-    "dev": "ts-node-dev --transpile-only --respawn src/index.js",
+    "start": "tsc && nodemon src/index.ts ",
+    "dev": "ts-node-dev --transpile-only --respawn src/index.ts",
     "prod": "tsc && node ./build/src/index.js",
     "debug": "tsc && node --inspect .build/src/index.js"
   },
