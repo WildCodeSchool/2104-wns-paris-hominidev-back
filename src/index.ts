@@ -1,5 +1,5 @@
 const {typeDefs} = require("./graphQl/schema/index")
-const resolver = require("./graphQl/resolver/user.resolver")
+const resolver = require("./controller/resolver/user.resolver")
 
 const {ApolloServer} = require('apollo-server');
 const dbConnect = require("./config//config.db");
