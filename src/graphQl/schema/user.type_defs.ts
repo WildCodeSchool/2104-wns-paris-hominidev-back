@@ -1,17 +1,19 @@
-const {gql} = require("apollo-server");
+const {gql} = require("apollo-server-express");
 
-//graphql schema
-module.exports=gql`
+//graphql user schema
+const userTypeDefs = gql`
     type User{
         id: ID!
         firstname: String!
         lastname: String!
         email: String!
+        password:String!
     }
     input userInput{
         firstname: String!
         lastname: String!
         email: String!
+        password:String!
     }
     type Query{
         getUsers: [User]
@@ -24,3 +26,4 @@ module.exports=gql`
         deleteUser(userId: ID!): User
     }
 `
+module.exports={userTypeDefs}

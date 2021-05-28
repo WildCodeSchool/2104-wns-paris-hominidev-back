@@ -1,5 +1,6 @@
-const typeDefs = require( './type_defs');
+// @ts-ignore
+import {userTypeDefs} from'./user.type_defs'
 
 module.exports={
-    typeDefs
+    userTypeDefs
 }
