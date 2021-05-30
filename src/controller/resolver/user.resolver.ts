@@ -1,13 +1,15 @@
 import {ApolloError, UserInputError} from "apollo-server-express";
-import {IUser} from "../../interface/interface";
+import {IUser, UserAuthRequest} from "../../interface/interface";
+const isAuth = require('../../middleware/is-auth')
 
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const User = require('../../models/user.model').UserModel;
 
+
 const user_Resolver = {
     Query: {
-        getUser: async (parent: any, args: any) => {
+        getUser: async (parent: any, args: any, req: UserAuthRequest) => {
             try {
                 const {userId} = args;
                 return await User.findById(userId);
@@ -16,7 +18,11 @@ const user_Resolver = {
                 throw new ApolloError(error);
             }
         },
-        getUsers: async (parent: any, args: any) => {
+        // @ts-ignore
+        getUsers: async (parent: any, args: any, {isAuth}) => {
+            /*if (!isAuth) {
+                throw new Error('unAuthenticated')
+            }*/
             try {
                 return await User.find();
             } catch (error) {
@@ -25,7 +31,7 @@ const user_Resolver = {
         },
         // @ts-ignore
         login: async (parent: any, args: any) => {
-            const {id,firstname, lastname, email, password}:IUser = args;
+            const {id, firstname, lastname, email, password}: IUser = args;
             const user = await User.findOne({email: email})
             if (!user) {
                 throw new Error('This User does not exist')
@@ -42,8 +48,8 @@ const user_Resolver = {
             );
             return {
                 id: user.id,
-                firstname:firstname,
-                lastname:lastname,
+                firstname: firstname,
+                lastname: lastname,
                 token: token,
                 tokenExpiration: 1
             }
@@ -51,12 +57,15 @@ const user_Resolver = {
     },
     Mutation: {
         registerUser: async (parent: any, args: any) => {
-            const {id,firstname, lastname, email, password} = args;
+            const {id, firstname, lastname, email, password, confirmPassword} = args;
             try {
                 // @ts-ignore
                 const existingUser = await User.findOne({email: email})
                 if (existingUser) {
                     throw new Error("user already exist.")
+                }
+                if (password != confirmPassword) {
+                    throw new Error("Password dont match")
                 }
                 const hashedPassword = await bcrypt.hash(password, 12);
                 const user = new User({
@@ -66,7 +75,7 @@ const user_Resolver = {
                     password: hashedPassword
                 });
                 const result = await user.save();
-                return {...result._doc, id:user.id}
+                return {...result._doc, id: user.id}
             } catch (err) {
                 console.log(err)
             }

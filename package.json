@@ -27,8 +27,11 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",
+    "graphql-middleware": "^6.0.10",
+    "graphql-tools": "^4.0.8",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.12.6"
+    "mongoose": "^5.12.6",
+    "type-graphql": "^1.1.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",

@@ -1,10 +1,11 @@
-const {userTypeDefs} = require("./graphQl/schema/index")
-const resolver = require("./controller/resolver/index")
-const UserModel = require("./models/user.model")
+import * as dotenv from 'dotenv';
 
 const {ApolloServer} = require('apollo-server');
+
+const {userTypeDefs} = require("./graphQl/schema/index")
+const resolver = require("./controller/resolver/index")
+const isAuth = require('./middleware/is-auth')
 const dbConnect = require("./config//config.db");
-import * as dotenv from 'dotenv';
 
 dotenv.config();
 dbConnect();
@@ -12,9 +13,8 @@ dbConnect();
 const server = new ApolloServer({
     typeDefs: userTypeDefs,
     resolvers: resolver.userResolver,
-    context: () => {
-    }
 });
+
 server.listen().then(({url}: { url: string }) => {
     console.log(`🚀  Server ready at ${url}`);
 });

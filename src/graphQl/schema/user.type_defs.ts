@@ -1,5 +1,7 @@
 const {gql} = require("apollo-server-express");
 
+import { Field, ObjectType, InputType } from 'type-graphql'
+
 //graphql user schema
 const userTypeDefs = gql`
     scalar Date
@@ -9,6 +11,7 @@ const userTypeDefs = gql`
         lastname: String!
         email: String!
         password:String
+        confirmPassword:String!
     }
     type AuthData{
         id:ID!
@@ -20,6 +23,7 @@ const userTypeDefs = gql`
         lastname: String!
         email: String!
         password:String!
+        confirmPassword:String!
     }
     type Query{
         getUsers: [User]
@@ -28,7 +32,7 @@ const userTypeDefs = gql`
     }
 
     type Mutation {
-        registerUser(firstname:String!,lastname:String!,email: String!, password: String!): User!
+        registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
         
