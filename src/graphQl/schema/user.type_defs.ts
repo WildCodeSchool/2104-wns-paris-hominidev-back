@@ -1,7 +1,5 @@
 const {gql} = require("apollo-server-express");
 
-import { Field, ObjectType, InputType } from 'type-graphql'
-
 //graphql user schema
 const userTypeDefs = gql`
     scalar Date
@@ -17,6 +15,9 @@ const userTypeDefs = gql`
         id:ID!
         token:String!
         tokenExpiration:Int!
+        firstname: String!
+        lastname: String!
+        email:String!
     }
     input userInput{
         firstname: String!
@@ -26,7 +27,7 @@ const userTypeDefs = gql`
         confirmPassword:String!
     }
     type Query{
-        getUsers: [User]
+        users: [User!]
         getUser(id:ID!):User!
         login(email: String!,password: String!):AuthData!
     }

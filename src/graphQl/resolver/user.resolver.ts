@@ -1,5 +1,6 @@
 import {ApolloError, UserInputError} from "apollo-server-express";
 import {IUser, UserAuthRequest} from "../../interface/interface";
+
 const isAuth = require('../../middleware/is-auth')
 
 const bcrypt = require('bcrypt')
@@ -19,7 +20,7 @@ const user_Resolver = {
             }
         },
         // @ts-ignore
-        getUsers: async (parent: any, args: any, {isAuth}) => {
+        users: async (parent: any, args: any, {isAuth}) => {
             /*if (!isAuth) {
                 throw new Error('unAuthenticated')
             }*/
@@ -31,7 +32,7 @@ const user_Resolver = {
         },
         // @ts-ignore
         login: async (parent: any, args: any) => {
-            const {id, firstname, lastname, email, password}: IUser = args;
+            const {email, password}: IUser = args;
             const user = await User.findOne({email: email})
             if (!user) {
                 throw new Error('This User does not exist')
@@ -48,8 +49,9 @@ const user_Resolver = {
             );
             return {
                 id: user.id,
-                firstname: firstname,
-                lastname: lastname,
+                firstname: user.firstname,
+                lastname: user.lastname,
+                email:user.email,
                 token: token,
                 tokenExpiration: 1
             }
@@ -75,7 +77,7 @@ const user_Resolver = {
                     password: hashedPassword
                 });
                 const result = await user.save();
-                return {...result._doc, id: user.id}
+                return {msg: "user created", ...result._doc, id: user.id}
             } catch (err) {
                 console.log(err)
             }
