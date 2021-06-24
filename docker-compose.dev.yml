@@ -1,0 +1,11 @@
+# docker-compose.yml
+services:
+    browser:
+        container_name: the_browser_extension
+        build: ../browser-extension
+        ports:
+            - 127.0.0.1:8080:8080
+        volumes: 
+            - ${PWD}/browser-extension/build:/browserExtension/build
+            - ${PWD}/browser-extension/src:/browserExtension/src
+            - ${PWD}/browser-extension/public:/browserExtension/public
