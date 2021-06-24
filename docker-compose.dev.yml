@@ -1,6 +1,6 @@
 # docker-compose.yml
 services:
-    browser:
+    client_ext:
         container_name: pygma_client_ext
         build: ../pygma-client-ext
         ports:
