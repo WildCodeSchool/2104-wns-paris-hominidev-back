@@ -18,7 +18,7 @@ const server = new ApolloServer({
 });
 
 server.listen().then(({url}: { url: string }) => {
-    console.log(`🚀  Server ready at ${url}`);
+    console.log(`🚀  Server ready at${url}`);
 });
 
 export default server
