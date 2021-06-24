@@ -9,8 +9,8 @@
     "dev": "ts-node-dev --transpile-only --respawn src/index.ts",
     "prod": "tsc && node ./build/src/index.js",
     "debug": "tsc && node --inspect .build/src/index.js",
-    "dockbuild": "docker build -t 2104-wns-paris-hominidev-back .",
-    "dockrun": "docker run -p 4000:4000 2104-wns-paris-hominidev-back"
+    "dockbuild": "docker build -t pygma-server .",
+    "dockrun": "docker run -p 4000:4000 pygma-server"
   },
   "repository": {
     "type": "git",

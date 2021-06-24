@@ -18,3 +18,13 @@ docker-compose -f pygma-server/docker-compose.dev.yml up --build
 The build is available in /pygma.link/pygma-client-ext/build
 
 It should work in Chrome flavor like browser & firefox. You must pick the manifest.json in Firefox.
+
+### Special commands
+Build docker image : 
+```
+    yarn dockbuild
+```
+run docker image : 
+```
+    yarn dockrun
+```
