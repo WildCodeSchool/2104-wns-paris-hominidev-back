@@ -1,0 +1,11 @@
+# docker-compose.yml
+services:
+    client_ext:
+        container_name: pygma_client_ext
+        build: ../pygma-client-ext
+        ports:
+            - 127.0.0.1:8080:8080
+        volumes: 
+            - ${PWD}/pygma-client-ext/build:/pygmaClientExt/build
+            - ${PWD}/pygma-client-ext/src:/pygmaClientExt/src
+            - ${PWD}/pygma-client-ext/public:/pygmaClientExt/public
