@@ -9,3 +9,10 @@ services:
             - ${PWD}/pygma-client-ext/build:/pygmaClientExt/build
             - ${PWD}/pygma-client-ext/src:/pygmaClientExt/src
             - ${PWD}/pygma-client-ext/public:/pygmaClientExt/public
+    server:
+        container_name: pygma-server
+        build: ../pygma-server
+        ports:
+            - 4000:4000
+        volumes:
+            - ../pygma-server/src:/pygma-server/src

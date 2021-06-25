@@ -1,24 +1,25 @@
+#!/bin/ash
 #define the version of node
 FROM node:15.1-alpine
 # pour palier a l'installation de bcrypt ou de dependance manquante
 RUN apk add --update alpine-sdk && \
     apk add libffi-dev openssl-dev && \
     apk add python-dev python3-dev
-# create a working directory for the container
-RUN mkdir /app
+
 # define app as working container directory
-WORKDIR /app
+WORKDIR /pygma-server
 #copy all package  with ext json in root of workdir
 COPY package*.json ./
 #copy tsconfig
 COPY tsconfig.json ./
-# install package
-COPY ./src src
-# run while build package instalation
-RUN npm i
+#copy le dossier src
+COPY src src
+#copy les variables d'environement
 COPY .env .env
+# install package
+RUN yarn
 # will expose the container on PORT 4000
 EXPOSE 4000
 #start the container
-CMD npm start
+CMD yarn run dev
 

@@ -5,12 +5,13 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "jest --watchAll",
-    "start": "tsc && nodemon src/index.ts ",
+    "start": "ts-node-dev src/index.ts ",
     "dev": "ts-node-dev --transpile-only --respawn src/index.ts",
     "prod": "tsc && node ./build/src/index.js",
     "debug": "tsc && node --inspect .build/src/index.js",
     "dockbuild": "docker build -t pygma-server .",
-    "dockrun": "docker run -p 4000:4000 pygma-server"
+    "dockrun": "docker run -p 4000:4000 pygma-server",
+    "dockercompose": "cd .. && docker-compose -f pygma-server/docker-compose.dev.yml up --build"
   },
   "repository": {
     "type": "git",
