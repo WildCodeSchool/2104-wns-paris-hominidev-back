@@ -1,24 +1,25 @@
-const bcrypt = require('bcrypt')
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
+import { Schema, model, connect } from 'mongoose';
+import {IUser} from "../interface/interface";
 
-// @ts-ignore
-const Schema = mongoose.Schema;
+enum role {
+    "pygma admin",
+    "campus manager",
+    "lead instructor",
+    "instructor",
+    "student"
+}
 
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
     firstname: String,
     lastname: String,
-    email: {
-        type: String,
-        index: {unique: true}
-    },
+    email: {type: String, index: {unique: true}},
     password: {type: String},
-    isConnected: Boolean!,
-    createAt: {
-        type: Date,
-        default: Date.now
-    }
+    avatar: String,
+    role: {type: role, default: role.student},
+    createAt: {type: Date, default: Date.now}
 });
 
 
-const UserModel = mongoose.model("User", userSchema);
+const UserModel = model("User", userSchema);
 module.exports = {UserModel, userSchema};

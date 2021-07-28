@@ -3,7 +3,6 @@ import * as dotenv from 'dotenv';
 const {ApolloServer} = require('apollo-server');
 const {userTypeDefs} = require("./graphQl/schema/index")
 const resolver = require("./graphQl/resolver")
-const isAuth = require('./middleware/is-auth')
 const dbConnect = require("./config//config.db");
 
 dotenv.config();
