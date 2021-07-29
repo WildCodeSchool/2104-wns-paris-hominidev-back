@@ -16,10 +16,10 @@ COPY tsconfig.json ./
 COPY src src
 #copy les variables d'environement
 COPY .env .env
-# install package
-RUN yarn
 # will expose the container on PORT 4000
 EXPOSE 4000
-#start the container
-CMD yarn run dev
+# launch script stuffs
+COPY launch.sh ./
+RUN chmod +x ./launch.sh
+ENTRYPOINT ["/bin/sh", "./launch.sh"]
 
