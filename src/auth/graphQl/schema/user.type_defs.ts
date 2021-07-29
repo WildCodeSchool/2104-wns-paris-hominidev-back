@@ -8,6 +8,7 @@ const userTypeDefs = gql`
         firstname: String!
         lastname: String!
         email: String!
+        role:String!
         password:String
         confirmPassword:String!
     }
@@ -28,12 +29,12 @@ const userTypeDefs = gql`
     }
     type Query{
         users: [User!]
-        getUser(id:ID!):User!
+        getUser(userId:ID!):User!
         login(email: String!,password: String!):AuthData!
     }
 
     type Mutation {
-        registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!): User!
+        registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
         
