@@ -1,9 +1,9 @@
 import * as dotenv from 'dotenv';
 
 const {ApolloServer} = require('apollo-server');
-const {userTypeDefs} = require("./graphQl/schema/index")
-const resolver = require("./graphQl/resolver")
-const dbConnect = require("./config//config.db");
+const {userTypeDefs} = require("./auth/graphQl/schema/index")
+const resolver = require("./auth/graphQl/resolver")
+const dbConnect = require("./auth/config/config.db");
 const jwt = require("jsonwebtoken");
 
 dotenv.config();

@@ -1,6 +1,6 @@
 //const mongoose = require("mongoose");
 import { Schema, model, connect } from 'mongoose';
-import {IUser} from "../interface/interface";
+import {IUser} from "../../interface/interface";
 
 enum role {
     "pygma admin",

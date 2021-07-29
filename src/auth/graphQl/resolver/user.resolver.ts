@@ -1,9 +1,9 @@
-import {IUser} from "../../interface/interface";
+import {IUser} from "../../../interface/interface";
 const { ApolloError,AuthenticationError } = require("apollo-server");
 
 const bcrypt = require('bcrypt')
 const User = require('../../models/user.model').UserModel;
-const genToken = require('../../utils/genToken')
+const genToken = require('../../../utils/genToken')
 
 
 const user_Resolver = {
@@ -20,7 +20,7 @@ const user_Resolver = {
                 throw new AuthenticationError("Invalid auth");
             }
         },
-        users: async (context:any) => {
+        users: async (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
                 try {
                     return await User.find();

@@ -1,6 +1,6 @@
 // @ts-ignore
 import request from "supertest"
-import server from "../../../index"
+import server from "../../../../index"
 
 const userResolver = require('../user.resolver')
 const userModel = require("../../../models/user.model")
