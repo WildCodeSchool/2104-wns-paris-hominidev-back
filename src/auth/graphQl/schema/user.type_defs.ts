@@ -1,9 +1,9 @@
-const {gql} = require("apollo-server-express");
+import {gql} from "apollo-server-express";
 
 //graphql user schema
 const userTypeDefs = gql`
     scalar Date
-    type User{
+    type User {
         id: ID!
         firstname: String!
         lastname: String!
