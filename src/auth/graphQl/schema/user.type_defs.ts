@@ -1,8 +1,10 @@
 const {gql} = require("apollo-server-express");
-
 //graphql user schema
 const userTypeDefs = gql`
     scalar Date
+    type Message{
+    value:String
+    }
     type User{
         id: ID!
         firstname: String!
@@ -28,11 +30,11 @@ const userTypeDefs = gql`
         confirmPassword:String!
     }
     type Query{
+        postMessage(value:String!):Message
         users: [User!]
         getUser(userId:ID!):User!
         login(email: String!,password: String!):AuthData!
     }
-
     type Mutation {
         registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
         updateUser(userId: ID!, userInput: userInput): User

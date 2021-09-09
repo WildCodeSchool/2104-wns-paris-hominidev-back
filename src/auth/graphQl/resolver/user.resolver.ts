@@ -1,4 +1,5 @@
 import {IUser} from "../../../interface/interface";
+import * as stream from "stream";
 const { ApolloError,AuthenticationError } = require("apollo-server");
 
 const bcrypt = require('bcrypt')
@@ -8,6 +9,13 @@ const genToken = require('../../../utils/genToken')
 
 const user_Resolver = {
     Query: {
+        postMessage:(parent:any,args:any)=>{
+            const message:string=args
+            if (args){
+                console.log(message)
+            }
+            return message
+        },
         getUser: async (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
                 try {
@@ -70,7 +78,6 @@ const user_Resolver = {
             } catch (err) {
                 console.log(err)
             }
-
         },
         updateUser: async (parent: any, args: any) => {
             try {
