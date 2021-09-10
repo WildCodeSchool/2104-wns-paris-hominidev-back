@@ -18,12 +18,9 @@ const user_Resolver = {
             const message: string = args
             let newNotification
             if (message) {
-                //localStorage.setItem("message", JSON.stringify(message))
                 newNotification = {label: message}
-                pubsub.publish(FORMER_NOTIFICATION, {newNotification})
-                console.log("neeee", newNotification)
+                pubsub.publish('FORMER_NOTIFICATION', {newNotification: newNotification.label})
             }
-            //let test = localStorage.getItem("message")
             // @ts-ignore
             console.log('ici', newNotification.label.value)
             return message
@@ -123,12 +120,10 @@ const user_Resolver = {
         newNotification: {
             subscribe: () => {
                 const pubsub = new PubSub();
-                let test = pubsub.asyncIterator(FORMER_NOTIFICATION)
-            console.log(test)
+                return pubsub.asyncIterator('FORMER_NOTIFICATION')
             }
-        }
+        },
     }
 }
-
 
 module.exports = user_Resolver

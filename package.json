@@ -38,6 +38,7 @@
     "localStorage": "^1.0.4",
     "mongoose": "^5.12.6",
     "npm": "^7.18.1",
+    "subscriptions-transport-ws": "^0.9.19",
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {

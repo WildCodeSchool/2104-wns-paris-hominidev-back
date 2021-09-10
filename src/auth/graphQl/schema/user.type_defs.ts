@@ -3,9 +3,8 @@ const {gql} = require("apollo-server-express");
 const userTypeDefs = gql`
     scalar Date
     type Notification { label: String }
-    type Message{
-    value:String
-    }
+    type Message{ value:String }
+    type Post{ value:String }
     type User{
         id: ID!
         firstname: String!
@@ -42,8 +41,10 @@ const userTypeDefs = gql`
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
         pushNotification(label: String!): Notification 
-       
     }
-    type Subscription { newNotification: Notification }
+    type Subscription { 
+    newNotification: Notification 
+    postCreated: Post
+    }
 `
-module.exports={userTypeDefs}
+module.exports = {userTypeDefs}
