@@ -2,6 +2,7 @@ const {gql} = require("apollo-server-express");
 //graphql user schema
 const userTypeDefs = gql`
     scalar Date
+    type Notification { label: String }
     type Message{
     value:String
     }
@@ -34,12 +35,15 @@ const userTypeDefs = gql`
         users: [User!]
         getUser(userId:ID!):User!
         login(email: String!,password: String!):AuthData!
+        notifications: [Notification]
     }
     type Mutation {
         registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
-        
+        pushNotification(label: String!): Notification 
+       
     }
+    type Subscription { newNotification: Notification }
 `
 module.exports={userTypeDefs}

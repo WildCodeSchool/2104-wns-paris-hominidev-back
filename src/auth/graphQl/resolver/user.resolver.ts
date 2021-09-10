@@ -1,19 +1,31 @@
 import {IUser} from "../../../interface/interface";
-import * as stream from "stream";
-const { ApolloError,AuthenticationError } = require("apollo-server");
+import {PubSub} from "graphql-subscriptions";
+
+const {AuthenticationError} = require("apollo-server-express");
+const localStorage = require('localStorage')
 
 const bcrypt = require('bcrypt')
 const User = require('../../models/user.model').UserModel;
 const genToken = require('../../../utils/genToken')
 
+const FORMER_NOTIFICATION = 'newNotifications';
 
 const user_Resolver = {
+
     Query: {
-        postMessage:(parent:any,args:any)=>{
-            const message:string=args
-            if (args){
-                console.log(message)
+        postMessage: (parent: any, args: any) => {
+            const pubsub = new PubSub();
+            const message: string = args
+            let newNotification
+            if (message) {
+                //localStorage.setItem("message", JSON.stringify(message))
+                newNotification = {label: message}
+                pubsub.publish(FORMER_NOTIFICATION, {newNotification})
+                console.log("neeee", newNotification)
             }
+            //let test = localStorage.getItem("message")
+            // @ts-ignore
+            console.log('ici', newNotification.label.value)
             return message
         },
         getUser: async (parent: any, args: any, context: any) => {
@@ -24,7 +36,7 @@ const user_Resolver = {
                 } catch (error) {
                     throw new Error(error);
                 }
-            }else {
+            } else {
                 throw new AuthenticationError("Invalid auth");
             }
         },
@@ -35,7 +47,7 @@ const user_Resolver = {
                 } catch (error) {
                     throw new Error(error);
                 }
-            }else {
+            } else {
                 throw new AuthenticationError("Invalid auth");
             }
 
@@ -95,7 +107,28 @@ const user_Resolver = {
                 throw new Error(error);
             }
         },
+        pushNotification: () => {
+            let message = JSON.parse(localStorage.getItem("message"))
+            let newNotification
+            const pubsub = new PubSub();
+            console.log("test", message.value)
+            if (message) {
+                newNotification = {label: message.value}
+                pubsub.publish(FORMER_NOTIFICATION, {newNotification})
+            }
+            return newNotification;
+        },
+    },
+    Subscription: {
+        newNotification: {
+            subscribe: () => {
+                const pubsub = new PubSub();
+                let test = pubsub.asyncIterator(FORMER_NOTIFICATION)
+            console.log(test)
+            }
+        }
     }
 }
+
 
 module.exports = user_Resolver

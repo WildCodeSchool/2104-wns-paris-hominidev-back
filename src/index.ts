@@ -1,14 +1,14 @@
 import * as dotenv from 'dotenv';
 
-const {ApolloServer} = require('apollo-server');
+import { ApolloServer } from 'apollo-server';
 const {userTypeDefs} = require("./auth/graphQl/schema/index")
 const resolver = require("./auth/graphQl/resolver")
+
 const dbConnect = require("./auth/config/config.db");
 const jwt = require("jsonwebtoken");
 
 dotenv.config();
 dbConnect();
-
 
 const server = new ApolloServer({
     cors:{
