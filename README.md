@@ -9,11 +9,11 @@ git clone https://github.com/WildCodeSchool/2104-wns-paris-hominidev-front.git p
 ```
 
 ### Docker-compose
-``` 
+```
 cd pygma.link 
 docker-compose -f pygma-server/docker-compose.dev.yml up --build
 ```
- 
+
 ### Install extension
 The build is available in /pygma.link/pygma-client-ext/build
 
