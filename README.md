@@ -10,13 +10,8 @@ git clone https://github.com/WildCodeSchool/2104-wns-paris-hominidev-front.git p
 
 ### Docker-compose
 ```
-<<<<<<< HEAD
 cd pygma-server
 yarn run dockercompose
-=======
-cd pygma.link
-docker-compose -f pygma-server/docker-compose.dev.yml up --build
->>>>>>> ef28c8a59096a690d807d7dc5a53580316c110ff
 ```
 
 ### Install extension
