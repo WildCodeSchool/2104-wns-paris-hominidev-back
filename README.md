@@ -7,11 +7,11 @@ cd pygma.link
 git clone https://github.com/WildCodeSchool/2104-wns-paris-hominidev-back.git pygma-server
 git clone https://github.com/WildCodeSchool/2104-wns-paris-hominidev-front.git pygma-client-ext
 ```
-
+  
 ### Docker-compose
 ```
-cd pygma.link 
-docker-compose -f pygma-server/docker-compose.dev.yml up --build
+cd pygma-server 
+yarn run dockercompose
 ```
 
 ### Install extension
