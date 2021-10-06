@@ -7,7 +7,7 @@ cd pygma.link
 git clone https://github.com/WildCodeSchool/2104-wns-paris-hominidev-back.git pygma-server
 git clone https://github.com/WildCodeSchool/2104-wns-paris-hominidev-front.git pygma-client-ext
 ```
-
+ 
 ### Docker-compose
 ```
 cd pygma-server 
