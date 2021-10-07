@@ -5,13 +5,12 @@ const {AuthenticationError} = require("apollo-server-express");
 const localStorage = require('localStorage')
 
 const bcrypt = require('bcrypt')
-const User = require('../../models/user.model').UserModel;
+const User = require('../../models/user.model');
 const genToken = require('../../../utils/genToken')
 
 const FORMER_NOTIFICATION = 'newNotifications';
 
-const user_Resolver = {
-
+export const userResolver = {
     Query: {
         postMessage: (parent: any, args: any) => {
             const pubsub = new PubSub();
@@ -31,7 +30,7 @@ const user_Resolver = {
                     const {userId} = args;
                     return await User.findById(userId);
                 } catch (error) {
-                    throw new Error(error);
+                    console.log(error)
                 }
             } else {
                 throw new AuthenticationError("Invalid auth");
@@ -42,7 +41,7 @@ const user_Resolver = {
                 try {
                     return await User.find();
                 } catch (error) {
-                    throw new Error(error);
+                    console.log(error)
                 }
             } else {
                 throw new AuthenticationError("Invalid auth");
@@ -65,7 +64,7 @@ const user_Resolver = {
     },
     Mutation: {
         registerUser: async (parent: any, args: any) => {
-            const {id, firstname, lastname, email, password, confirmPassword, role} = args;
+            const {firstname, lastname, email, password, confirmPassword, role} = args;
             try {
                 const existingUser = await User.findOne({email: email})
                 if (existingUser) {
@@ -93,7 +92,7 @@ const user_Resolver = {
                 const {userId, userInput} = args;
                 return await User.findOneAndUpdate(userId, userInput, {new: true});
             } catch (error) {
-                throw new Error(error);
+                console.log(error)
             }
         },
         deleteUser: async (parent: any, args: any) => {
@@ -101,7 +100,7 @@ const user_Resolver = {
                 const {userId} = args;
                 return await User.findByIdAndDelete(userId);
             } catch (error) {
-                throw new Error(error);
+                console.log(error)
             }
         },
         pushNotification: () => {
@@ -125,5 +124,3 @@ const user_Resolver = {
         },
     }
 }
-
-module.exports = user_Resolver
