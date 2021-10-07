@@ -1,30 +1,32 @@
 import * as dotenv from 'dotenv';
-
-import {makeExecutableSchema} from "graphql-tools";
 import {ApolloServerPluginDrainHttpServer} from 'apollo-server-core';
-import {createServer} from 'http';
-import {execute, subscribe} from 'graphql';
-import {SubscriptionServer} from 'subscriptions-transport-ws';
-
+const {ApolloServer} = require('apollo-server-express');
 const express = require('express');
-const {ApolloServer, gql} = require('apollo-server-express');
-const {userTypeDefs} = require("./auth/graphQl/schema/index")
-const resolver = require("./auth/graphQl/resolver")
+import {Request} from "express";
+import {SubscriptionServer} from 'subscriptions-transport-ws';
+import {makeExecutableSchema} from "graphql-tools";
+import {execute, subscribe} from 'graphql';
+import {createServer} from 'http';
+
+import { type_Defs } from "./auth/graphQl/schema/type_defs";
+
+import {userResolver} from "./auth/graphQl/resolver/user.resolver";
+import { formationResolver } from './auth/graphQl/resolver/formation.resolver';
+import { GroupResolver } from './auth/graphQl/resolver/group.resolver';
+
 const PORT = 4000;
 
 const dbConnect = require("./auth/config/config.db");
 const jwt = require("jsonwebtoken");
-
 dotenv.config();
 dbConnect();
-
 (async function () {
     const app = express();
     const httpServer = createServer(app);
 
     const schema = makeExecutableSchema({
-        typeDefs:userTypeDefs,
-        resolvers:resolver.userResolver,
+        typeDefs:type_Defs,
+        resolvers:[userResolver,GroupResolver, formationResolver],
     });
     const server = new ApolloServer({
         cors: {
@@ -45,8 +47,7 @@ dbConnect();
             ApolloServerPluginDrainHttpServer({httpServer})
         ],
 
-        // @ts-ignore
-        context: ({req}) => {
+        context: ({req}:{req:Request}) => {
             const token = req.headers.authorization;
             if (token) {
                 let payload;

@@ -1,6 +1,7 @@
-const {gql} = require("apollo-server-express");
+
+import { gql } from "apollo-server-express";
 //graphql user schema
-const userTypeDefs = gql`
+export const type_Defs = gql`
     scalar Date
     type Notification { label: String }
     type Message{ value:String }
@@ -13,7 +14,27 @@ const userTypeDefs = gql`
         role:String!
         password:String
         confirmPassword:String!
-    }
+        groups:Group
+    },
+    type Promotion{ 
+        id:ID!
+        name:String!
+        fomrmationId:String!
+        promotionId:String!
+        userId:String!
+    },
+    type Group{ 
+        id:ID!
+        name:String!
+        isActive:Boolean
+        fomrmationId:String
+        userId:String
+        users:[User]
+    },
+    type Formation{ 
+        id:ID!
+        name:String!
+    },
     type AuthData{
         id:ID!
         token:String!
@@ -30,13 +51,27 @@ const userTypeDefs = gql`
         confirmPassword:String!
     }
     type Query{
-        postMessage(value:String!):Message
         users: [User!]
         getUser(userId:ID!):User!
+
+        formation(formationId:ID!):Formation
+        formations:[Formation!]
+
+        group(goupId:ID!):Group!
+        groups: [Group!]
+
         login(email: String!,password: String!):AuthData!
+        postMessage(value:String!):Message
         notifications: [Notification]
     }
     type Mutation {
+        createFormation(name:String,):Formation!,
+        updateUFormation(id:ID!,name:String):Formation
+        deleteFormation(id:ID!):Formation
+
+        createGroup(name:String!,formationId:ID!, userId:ID!, isActive:Boolean):Group!,
+        deleteGroup(id:ID!):Group
+
         registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
@@ -47,4 +82,3 @@ const userTypeDefs = gql`
     postCreated: Post
     }
 `
-module.exports = {userTypeDefs}
