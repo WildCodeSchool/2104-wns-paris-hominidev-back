@@ -14,13 +14,16 @@ const pubsub = new PubSub();
 
 export const userResolver = {
     Query: {
-        postMessage: (parent: any, args: any) => {
-            const message: any = args
-            if (message) {
-                console.log(message.value)
-                pubsub.publish('FORMER_NOTIFICATION', {label: message.value})
+        postMessage: (parent: any, args: any, context: any) => {
+            if (context.authenticatedUserEmail) {
+                const message: any = args
+                if (message) {
+                    pubsub.publish('FORMER_NOTIFICATION', {newNotification: {label: message.label}})
+                }
+                return message
+            }else{
+                throw new AuthenticationError("Invalid auth");
             }
-            return message
         },
         getUser: async (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
@@ -104,8 +107,6 @@ export const userResolver = {
         pushNotification: () => {
             let message = JSON.parse(localStorage.getItem("message"))
             let newNotification
-            const pubsub = new PubSub();
-            console.log("test", message.value)
             if (message) {
                 newNotification = {label: message.value}
                 pubsub.publish(FORMER_NOTIFICATION, {newNotification})

@@ -28,14 +28,18 @@ dbConnect();
         typeDefs:type_Defs,
         resolvers:[userResolver,GroupResolver, formationResolver],
     });
+
+    const subscriptionServer = SubscriptionServer.create(
+        {schema, execute, subscribe},
+        {server: httpServer, path: '/graphql'}
+    );
+
     const server = new ApolloServer({
         schema,
         cors: { origin: '*', credentials: true },
-        plugins: [
-            {
+        plugins: [{
                 async serverWillStart() {
-                    return { async drainServer() {subscriptionServer.close();} };
-                }
+                    return { async drainServer() {subscriptionServer.close();} };}
             },
             ApolloServerPluginDrainHttpServer({httpServer})
         ],
@@ -52,11 +56,6 @@ dbConnect();
         }
 
     });
-    const subscriptionServer = SubscriptionServer.create(
-        {schema, execute, subscribe},
-        {server: httpServer, path: server.graphqlPath}
-    );
-
     await server.start();
     server.applyMiddleware({app});
 

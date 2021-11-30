@@ -62,7 +62,7 @@ export const type_Defs = gql`
         groups: [Group!]
 
         login(email: String!,password: String!):AuthData!
-        postMessage(value:String!):Message
+        postMessage(label:String!):Notification
         notifications: [Notification]
     }
     type Mutation {
