@@ -1,6 +1,5 @@
 import { Schema } from 'mongoose';
 
-
 export interface IUser {
     firstname: string;
     lastname: string;

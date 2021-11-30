@@ -10,18 +10,16 @@ const genToken = require('../../../utils/genToken')
 
 const FORMER_NOTIFICATION = 'newNotifications';
 
+const pubsub = new PubSub();
+
 export const userResolver = {
     Query: {
         postMessage: (parent: any, args: any) => {
-            const pubsub = new PubSub();
-            const message: string = args
-            let newNotification
+            const message: any = args
             if (message) {
-                newNotification = {label: message}
-                pubsub.publish('FORMER_NOTIFICATION', {newNotification: newNotification.label})
+                console.log(message.value)
+                pubsub.publish('FORMER_NOTIFICATION', {label: message.value})
             }
-            // @ts-ignore
-            console.log('ici', newNotification.label.value)
             return message
         },
         getUser: async (parent: any, args: any, context: any) => {
@@ -118,7 +116,6 @@ export const userResolver = {
     Subscription: {
         newNotification: {
             subscribe: () => {
-                const pubsub = new PubSub();
                 return pubsub.asyncIterator('FORMER_NOTIFICATION')
             }
         },

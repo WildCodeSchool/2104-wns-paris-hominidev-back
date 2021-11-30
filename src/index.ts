@@ -29,19 +29,12 @@ dbConnect();
         resolvers:[userResolver,GroupResolver, formationResolver],
     });
     const server = new ApolloServer({
-        cors: {
-            origin: '*',
-            credentials: true
-        },
         schema,
+        cors: { origin: '*', credentials: true },
         plugins: [
             {
                 async serverWillStart() {
-                    return {
-                        async drainServer() {
-                            subscriptionServer.close();
-                        }
-                    };
+                    return { async drainServer() {subscriptionServer.close();} };
                 }
             },
             ApolloServerPluginDrainHttpServer({httpServer})
