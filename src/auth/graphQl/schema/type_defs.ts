@@ -39,6 +39,7 @@ export const type_Defs = gql`
     type AuthData{
         id:ID!
         token:String!
+        role:String!
         tokenExpiration:Int!
         firstname: String!
         lastname: String!

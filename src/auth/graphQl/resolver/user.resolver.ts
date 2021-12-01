@@ -21,7 +21,7 @@ export const userResolver = {
                     pubsub.publish('FORMER_NOTIFICATION', {newNotification: {label: message.label}})
                 }
                 return message
-            }else{
+            } else {
                 throw new AuthenticationError("Invalid auth");
             }
         },
@@ -37,9 +37,10 @@ export const userResolver = {
                 throw new AuthenticationError("Invalid auth");
             }
         },
-        users: async (parent: any, args: any, context: any) => {
+        users: async (parent: any, args: any, context: any, res: Response) => {
             if (context.authenticatedUserEmail) {
                 try {
+                    console.log(res)
                     return await User.find();
                 } catch (error) {
                     console.log(error)
@@ -60,7 +61,7 @@ export const userResolver = {
                 throw new Error("Password is incorrect")
             }
             const token = genToken({userId: user.id, email: user.email, role: user.role}, process.env.SECRET)
-            return {id: user.id, token: token}
+            return {id: user.id, role: user.role, token: token}
         },
     },
     Mutation: {
