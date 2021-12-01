@@ -1,5 +1,7 @@
 import {IUser} from "../../../interface/interface";
 import {PubSub} from "graphql-subscriptions";
+import useFakeTimers = jest.useFakeTimers;
+import {withFilter} from "apollo-server";
 
 const {AuthenticationError} = require("apollo-server-express");
 const localStorage = require('localStorage')
@@ -105,21 +107,37 @@ export const userResolver = {
                 console.log(error)
             }
         },
-        pushNotification: () => {
-            let message = JSON.parse(localStorage.getItem("message"))
-            let newNotification
-            if (message) {
-                newNotification = {label: message.value}
-                pubsub.publish(FORMER_NOTIFICATION, {newNotification})
+        postQuestion: async (parent: any, args: any, context: any) => {
+            try {
+                const question = args
+                const formerID = question.formerID
+                const message = question.message
+                const user = await User.findById(formerID);
+                if (user.role != "1") {
+                    return {message: "vous n'etes pas habilité à poser une question "}
+                } else {
+                    pubsub.publish('FORMER_QUESTION', {newQuestion: {message: message}})
+                    return {message: message}
+                }
+            } catch (e) {
+                console.log(e)
             }
-            return newNotification;
         },
+        postAnswer: async (parent: any, args: any) => {
+        }
     },
+
     Subscription: {
         newNotification: {
             subscribe: () => {
                 return pubsub.asyncIterator('FORMER_NOTIFICATION')
             }
         },
+        newQuestion: {
+            subscribe: withFilter(() => pubsub.asyncIterator('FORMER_QUESTION'),
+                (payload, variables, context, info) => {
+                    return context.user.role == 1;
+                })
+        }
     }
 }

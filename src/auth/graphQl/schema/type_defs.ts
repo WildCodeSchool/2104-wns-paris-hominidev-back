@@ -5,8 +5,17 @@ import {IUser} from "../../../interface/interface";
 export const type_Defs = gql`
     scalar Date
     type Notification { label: String }
-    type Message{ value:String }
+    type Message{ message:String }
     type Post{ value:String }
+    
+    type Answer{
+    formerId:ID!
+    value:Boolean!
+    }
+    type Question { 
+        formerId:ID!
+        message:String!
+    } 
      type User{
         id: ID!
         firstname: String!
@@ -78,8 +87,12 @@ export const type_Defs = gql`
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
         pushNotification(label: String!): Notification 
+        
+        postQuestion(formerID:ID!, message:String!):Question
+        postAnswer(studentId:ID!, value:Boolean!):Answer
     }
     type Subscription { 
     newNotification: Notification
+    newQuestion:Message
     }
 `
