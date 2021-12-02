@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "jest --watchAll",
+    "test-ci": "jest",
     "start": "ts-node-dev src/index.ts ",
     "dev": "ts-node-dev --transpile-only --respawn src/index.ts",
     "prod": "tsc && node ./build/src/index.js",
