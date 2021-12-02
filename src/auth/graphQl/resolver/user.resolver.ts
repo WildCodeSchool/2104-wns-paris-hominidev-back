@@ -14,7 +14,6 @@ const FORMER_NOTIFICATION = 'newNotifications';
 
 const pubsub = new PubSub();
 
-
 export const userResolver = {
 
     Query: {
