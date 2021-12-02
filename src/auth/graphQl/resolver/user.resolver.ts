@@ -16,6 +16,7 @@ const pubsub = new PubSub();
 
 
 export const userResolver = {
+
     Query: {
         postMessage: (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
