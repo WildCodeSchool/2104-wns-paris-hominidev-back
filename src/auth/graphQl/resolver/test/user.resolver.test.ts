@@ -8,6 +8,6 @@ userModel.find = jest.fn();
 
 describe("user.resolver.getUsers", () => {
     it('should be a function', async () => {
-        await expect(typeof userResolver.Query.getUser).toBe('function')
+        await expect(typeof userResolver.userResolver.Query.getUser).toBe('function')
     });
 })

@@ -6,7 +6,7 @@ import {withFilter} from "apollo-server";
 const {AuthenticationError} = require("apollo-server-express");
 const localStorage = require('localStorage')
 
-const bcrypt = require('bcrypt')
+import bcrypt from 'bcryptjs';
 const User = require('../../models/user.model');
 const genToken = require('../../../utils/genToken')
 
