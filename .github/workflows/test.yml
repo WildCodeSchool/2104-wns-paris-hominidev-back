@@ -4,11 +4,9 @@ on:
     branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
+
   workflow_dispatch:
-env:
-    MONGODB_USERNAME: ${{ MONGODB_USERNAME} }:test
-    MONGODB_PASSWORD: ${{ MONGODB_PASSWORD }}:test
-    MONGODB_DATABASE: ${{ MONGODB_DATABASE }}:test
+
 jobs:
   build:
     runs-on: ubuntu-latest
