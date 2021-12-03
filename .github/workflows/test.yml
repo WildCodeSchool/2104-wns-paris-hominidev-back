@@ -9,9 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      MONGODB_USERNAME: ${{serets.env.MONGODB_USERNAME}}
-      MONGODB_PASSWORD: ${{secrets.env.MONGODB_PASSWORD}}
-      MONGODB_DATABASE: ${{secrets.env.MONGODB_DATABASE}}
+      MONGODB_USERNAME: ${{env.MONGODB_USERNAME}}
+      MONGODB_PASSWORD: ${{env.MONGODB_PASSWORD}}
+      MONGODB_DATABASE: ${{env.MONGODB_DATABASE}}
 
     strategy:
       matrix:
