@@ -19,10 +19,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+      - run: yarn install
+      - name: run test
         env:
           MONGODB_USERNAME: ${{ secrets.MONGODB_USERNAME }}
           MONGODB_PASSWORD: ${{ secrets.MONGODB_PASSWORD }}
           MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
-
-      - run: yarn install
       - run: npm run test-ci
