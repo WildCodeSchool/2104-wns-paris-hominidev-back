@@ -1,16 +1,16 @@
 
 import { gql } from "apollo-server-express";
 import {IUser} from "../../../interface/interface";
-//graphql user schema
+
 export const type_Defs = gql`
     scalar Date
     type Notification { label: String }
     type Message{ message:String }
     type Post{ value:String }
     
-    type Answer{
-    formerId:ID!
-    value:Boolean!
+    type BoolAnswer{
+    value:Boolean
+    student:String
     }
     type Question { 
         formerId:ID!
@@ -89,10 +89,11 @@ export const type_Defs = gql`
         pushNotification(label: String!): Notification 
         
         postQuestion(formerID:ID!, message:String!):Question
-        postAnswer(studentId:ID!, value:Boolean!):Answer
+        goodOrBad(studentId:ID!, value:Boolean):BoolAnswer
     }
     type Subscription { 
     newNotification: Notification
     newQuestion:Message
+    newBoolAnswer:BoolAnswer
     }
 `

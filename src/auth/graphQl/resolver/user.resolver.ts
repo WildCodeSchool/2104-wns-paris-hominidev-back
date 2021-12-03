@@ -7,10 +7,9 @@ const {AuthenticationError} = require("apollo-server-express");
 const localStorage = require('localStorage')
 
 import bcrypt from 'bcryptjs';
+
 const User = require('../../models/user.model');
 const genToken = require('../../../utils/genToken')
-
-const FORMER_NOTIFICATION = 'newNotifications';
 
 const pubsub = new PubSub();
 
@@ -124,7 +123,18 @@ export const userResolver = {
                 console.log(e)
             }
         },
-        postAnswer: async (parent: any, args: any) => {
+        goodOrBad: async (parent: any, args: any, context: any) => {
+            const {value} = args
+            if (context.authenticatedUserEmail) {
+                const userRole = context.authenticatedUserEmail.role
+                if (userRole != 4) {
+                    return
+                } else {
+                    const studentId = context.authenticatedUserEmail.userId
+                    pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
+                    return {value: value}
+                }
+            }
         }
     },
 
@@ -138,6 +148,12 @@ export const userResolver = {
             subscribe: withFilter(() => pubsub.asyncIterator('FORMER_QUESTION'),
                 (payload, variables, context, info) => {
                     return context.user.role == 1;
+                })
+        },
+        newBoolAnswer: {
+            subscribe: withFilter(() => pubsub.asyncIterator('STUDENT_BOOL_ANSWER'),
+                (payload, variables, context, info) => {
+                   return payload.newBoolAnswer.value
                 })
         }
     }
