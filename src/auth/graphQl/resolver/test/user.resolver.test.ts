@@ -31,8 +31,9 @@ beforeAll(async () => {
         console.log('mongo is connected');
     });
 })
-afterAll(async () => {
-    await mongoose.disconnect()
+afterAll(done => {
+     mongoose.disconnect()
+    done()
 })
 
 describe("user.resolver.getUsers", () => {
