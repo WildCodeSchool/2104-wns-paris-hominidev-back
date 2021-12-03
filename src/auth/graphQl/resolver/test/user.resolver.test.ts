@@ -48,20 +48,7 @@ describe("user.resolver.goodOrBad", () => {
     });
 })
 
-describe("user.resolver.login", () => {
-    it('login should be a function', async () => {
-        await expect(typeof resolver.userResolver.Query.login).toBe('function')
-    });
-    it("user can be log", async () => {
-        const user = await userModel.findOne({email: "ali@gmail.com"})
-        const isEqual = await bcrypt.compare(testUser.password, user.password)
-        expect(isEqual).toEqual(true)
-    })
-})
-
-
 describe("notification", () => {
-
     it('postMessage should be a function', async () => {
         authenticatedUserEmail &&
         await expect(typeof resolver.userResolver.Query.postMessage).toBe('function')
