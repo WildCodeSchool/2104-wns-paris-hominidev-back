@@ -31,8 +31,8 @@ beforeAll(async () => {
         console.log('mongo is connected');
     });
 })
-afterAll(done => {
-     mongoose.disconnect()
+afterAll(async (done) => {
+     await mongoose.disconnect()
     done()
 })
 
