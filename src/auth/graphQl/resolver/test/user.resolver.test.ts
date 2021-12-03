@@ -33,6 +33,7 @@ beforeAll(async () => {
 })
 afterAll(async () => {
      await mongoose.disconnect()
+
 })
 
 describe("user.resolver.getUsers", () => {
