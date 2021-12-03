@@ -6,9 +6,9 @@ on:
     branches: [ main, dev ]
   workflow_dispatch:
 env:
-    MONGODB_USERNAME: $ {{ secrets.MONGODB_USERNAME }}
-    MONGODB_PASSWORD: $ {{ secrets.MONGODB_PASSWORD }}
-    MONGODB_DATABASE: $ {{ secrets.MONGODB_DATABASE }}
+    MONGODB_USERNAME: $MONGODB_USERNAME
+    MONGODB_PASSWORD: $MONGODB_PASSWORD
+    MONGODB_DATABASE: $MONGODB_DATABASE
 jobs:
   build:
     runs-on: ubuntu-latest
