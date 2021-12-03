@@ -31,9 +31,8 @@ beforeAll(async () => {
         console.log('mongo is connected');
     });
 })
-afterAll(async (done) => {
+afterAll(async () => {
      await mongoose.disconnect()
-    done()
 })
 
 describe("user.resolver.getUsers", () => {
@@ -47,7 +46,16 @@ describe("user.resolver.goodOrBad", () => {
         await expect(typeof resolver.userResolver.Mutation.goodOrBad).toBe('function')
     });
 })
-
+describe("user.resolver.login", () => {
+    it('login should be a function', async () => {
+        await expect(typeof resolver.userResolver.Query.login).toBe('function')
+    });
+    it("user can be log", async () => {
+        const user = await userModel.findOne({email: "ali@gmail.com"})
+        const isEqual = await bcrypt.compare(testUser.password, user.password)
+        expect(isEqual).toEqual(true)
+    })
+})
 describe("notification", () => {
     it('postMessage should be a function', async () => {
         authenticatedUserEmail &&
