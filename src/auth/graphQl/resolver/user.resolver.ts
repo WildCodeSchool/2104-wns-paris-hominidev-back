@@ -12,9 +12,9 @@ const User = require('../../models/user.model');
 const genToken = require('../../../utils/genToken')
 
 const pubsub = new PubSub();
+const NEW_CHANNEL_MESSAGE = 'NEW_CHANNEL_MESSAGE';
 
 export const userResolver = {
-
     Query: {
         postMessage: (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
@@ -123,6 +123,23 @@ export const userResolver = {
                 console.log(e)
             }
         },
+        createMessage: async (parent: any, args: any, context: any) => {
+            if (context.authenticatedUserEmail) {
+                try {
+                    await pubsub.publish(NEW_CHANNEL_MESSAGE, {
+                        userId: context.authenticatedUserEmail.userId,
+                        roomId: args.roomId,
+                        newRoomMessage: {message: args.message}
+                    })
+                    return true
+                } catch (e) {
+                    console.log(e)
+                    return false
+                }
+            } else {
+                return {message: "Vous n'etes pas authentifier"}
+            }
+        },
         goodOrBad: async (parent: any, args: any, context: any) => {
             const {value} = args
             if (context.authenticatedUserEmail) {
@@ -134,6 +151,8 @@ export const userResolver = {
                     pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
                     return {value: value}
                 }
+            } else {
+                return {message: "Vous n'etes pas authentifier"}
             }
         }
     },
@@ -153,8 +172,16 @@ export const userResolver = {
         newBoolAnswer: {
             subscribe: withFilter(() => pubsub.asyncIterator('STUDENT_BOOL_ANSWER'),
                 (payload, variables, context, info) => {
-                   return payload.newBoolAnswer.value
+                    return payload.newBoolAnswer.value
                 })
+        },
+        newRoomMessage: {
+            subscribe: withFilter(() => pubsub.asyncIterator(NEW_CHANNEL_MESSAGE),
+                (payload, args) => {
+                    console.log(payload)
+                    return payload.roomId == args.roomId
+                }
+            )
         }
     }
 }

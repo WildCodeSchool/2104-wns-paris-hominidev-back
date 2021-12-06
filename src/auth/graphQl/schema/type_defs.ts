@@ -1,5 +1,4 @@
-
-import { gql } from "apollo-server-express";
+import {gql} from "apollo-server-express";
 import {IUser} from "../../../interface/interface";
 
 export const type_Defs = gql`
@@ -7,16 +6,21 @@ export const type_Defs = gql`
     type Notification { label: String }
     type Message{ message:String }
     type Post{ value:String }
-    
-    type BoolAnswer{
-    value:Boolean
-    student:String
+
+    type ChatMessage{
+        message: String!
+        user: User
     }
-    type Question { 
+
+    type BoolAnswer{
+        value:Boolean
+        student:String
+    }
+    type Question {
         formerId:ID!
         message:String!
-    } 
-     type User{
+    }
+    type User{
         id: ID!
         firstname: String!
         lastname: String!
@@ -26,14 +30,14 @@ export const type_Defs = gql`
         confirmPassword:String!
         groups:Group
     },
-    type Promotion{ 
+    type Promotion{
         id:ID!
         name:String!
         fomrmationId:String!
         promotionId:String!
         userId:String!
     },
-    type Group{ 
+    type Group{
         id:ID!
         name:String!
         isActive:Boolean
@@ -41,7 +45,7 @@ export const type_Defs = gql`
         userId:String
         users:[User]
     },
-    type Formation{ 
+    type Formation{
         id:ID!
         name:String!
     },
@@ -86,14 +90,16 @@ export const type_Defs = gql`
         registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
-        pushNotification(label: String!): Notification 
-        
+        pushNotification(label: String!): Notification
+
         postQuestion(formerID:ID!, message:String!):Question
+        createMessage(roomId:Int!, message:String!):Boolean!
         goodOrBad(studentId:ID!, value:Boolean):BoolAnswer
     }
-    type Subscription { 
-    newNotification: Notification
-    newQuestion:Message
-    newBoolAnswer:BoolAnswer
+    type Subscription {
+        newNotification: Notification
+        newQuestion:Message
+        newBoolAnswer:BoolAnswer
+        newRoomMessage(roomId:Int!,):Message
     }
 `
