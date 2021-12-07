@@ -33,7 +33,7 @@ export const type_Defs = gql`
     type Promotion{
         id:ID!
         name:String!
-        fomrmationId:String!
+        formationId:String!
         promotionId:String!
         userId:String!
     },
@@ -41,9 +41,8 @@ export const type_Defs = gql`
         id:ID!
         name:String!
         isActive:Boolean
-        fomrmationId:String
-        userId:String
-        users:[User]
+        formationId:String
+        userId:[ID!]
     },
     type Formation{
         id:ID!
@@ -84,7 +83,7 @@ export const type_Defs = gql`
         updateUFormation(id:ID!,name:String):Formation
         deleteFormation(id:ID!):Formation
 
-        createGroup(name:String!,formationId:ID!, userId:ID!, isActive:Boolean):Group!,
+        createGroup(name:String!,formationId:ID!, userId:[ID!], isActive:Boolean):Group,
         deleteGroup(id:ID!):Group
 
         registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
