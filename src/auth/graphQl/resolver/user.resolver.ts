@@ -1,21 +1,18 @@
 import {IUser} from "../../../interface/interface";
 import {PubSub} from "graphql-subscriptions";
-import useFakeTimers = jest.useFakeTimers;
 import {withFilter} from "apollo-server";
 
 const {AuthenticationError} = require("apollo-server-express");
-const localStorage = require('localStorage')
-
 import bcrypt from 'bcryptjs';
+
 const User = require('../../models/user.model');
+const Formation = require('../../models/formation.model')
 const genToken = require('../../../utils/genToken')
 
-const FORMER_NOTIFICATION = 'newNotifications';
-
 const pubsub = new PubSub();
+const NEW_CHANNEL_MESSAGE = 'NEW_CHANNEL_MESSAGE';
 
 export const userResolver = {
-
     Query: {
         postMessage: (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
@@ -73,21 +70,37 @@ export const userResolver = {
             try {
                 const existingUser = await User.findOne({email: email})
                 if (existingUser) {
-                    console.log("user existant")/* @todo gerer les erreur*/
+                    const InvalidGroup = new User({
+                        firstname: "null",
+                        lastname: "null",
+                        role: "null",
+                        email: `${email} this account already exist`
+                    })
+                    console.error({message: `${InvalidGroup.email}`})
+                    return InvalidGroup
+                } else {
+                    if (password != confirmPassword) {
+                        const InvalidPassword = new User({
+                            firstname: "null",
+                            lastname: "null",
+                            role: "null",
+                            email: 'null',
+                            password: "les mots de passe ne corespondent pas"
+                        })
+                        console.error({message: "password don't match"})
+                        return InvalidPassword
+                    }
+                    const hashedPassword = await bcrypt.hash(password, 12);
+                    const user = new User({
+                        firstname: firstname,
+                        lastname: lastname,
+                        email: email,
+                        password: hashedPassword,
+                        role: role
+                    });
+                    const result = await user.save();
+                    return {msg: "user created", ...result._doc, id: user.id}
                 }
-                if (password != confirmPassword) {
-                    console.log("password don't match")
-                }
-                const hashedPassword = await bcrypt.hash(password, 12);
-                const user = new User({
-                    firstname: firstname,
-                    lastname: lastname,
-                    email: email,
-                    password: hashedPassword,
-                    role: role
-                });
-                const result = await user.save();
-                return {msg: "user created", ...result._doc, id: user.id}
             } catch (err) {
                 console.log(err)
             }
@@ -124,7 +137,37 @@ export const userResolver = {
                 console.log(e)
             }
         },
-        postAnswer: async (parent: any, args: any) => {
+        createMessage: async (parent: any, args: any, context: any) => {
+            if (context.authenticatedUserEmail) {
+                try {
+                    await pubsub.publish(NEW_CHANNEL_MESSAGE, {
+                        userId: context.authenticatedUserEmail.userId,
+                        roomId: args.roomId,
+                        newRoomMessage: {message: args.message}
+                    })
+                    return true
+                } catch (e) {
+                    console.log(e)
+                    return false
+                }
+            } else {
+                return {message: "Vous n'etes pas authentifier"}
+            }
+        },
+        goodOrBad: async (parent: any, args: any, context: any) => {
+            const {value} = args
+            if (context.authenticatedUserEmail) {
+                const userRole = context.authenticatedUserEmail.role
+                if (userRole != 4) {
+                    return
+                } else {
+                    const studentId = context.authenticatedUserEmail.userId
+                    pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
+                    return {value: value}
+                }
+            } else {
+                return {message: "Vous n'etes pas authentifier"}
+            }
         }
     },
 
@@ -139,6 +182,20 @@ export const userResolver = {
                 (payload, variables, context, info) => {
                     return context.user.role == 1;
                 })
+        },
+        newBoolAnswer: {
+            subscribe: withFilter(() => pubsub.asyncIterator('STUDENT_BOOL_ANSWER'),
+                (payload, variables, context, info) => {
+                    return payload.newBoolAnswer.value
+                })
+        },
+        newRoomMessage: {
+            subscribe: withFilter(() => pubsub.asyncIterator(NEW_CHANNEL_MESSAGE),
+                (payload, args) => {
+                    console.log(payload)
+                    return payload.roomId == args.roomId
+                }
+            )
         }
     }
 }

@@ -64,7 +64,7 @@ dbConnect();
         ],
 
         context: ({req}: { req: Request }) => {
-            const token = req.headers.authorization;
+            const token = req.headers.Authorization;
             if (token) {
                 let payload;
                 try {

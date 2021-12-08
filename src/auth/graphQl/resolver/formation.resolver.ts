@@ -25,12 +25,14 @@ export const formationResolver = {
           const existingFormation = await Formation.findOne({name:name})
           if(existingFormation){
               console.log("cette formation existe deja")
+              return {name:"cette formation existe deja"}
+          }else{
+              const formation =new Formation({
+                  name: name,
+              })
+              await formation.save();
+              return formation;
           }
-          const formation =new Formation({
-              name: name,
-          })
-          await formation.save();
-          return formation;
         },
         updateUFormation: async (parent: any, args: any) => {
             try{

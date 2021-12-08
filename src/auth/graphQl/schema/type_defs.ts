@@ -1,22 +1,26 @@
-
-import { gql } from "apollo-server-express";
+import {gql} from "apollo-server-express";
 import {IUser} from "../../../interface/interface";
-//graphql user schema
+
 export const type_Defs = gql`
     scalar Date
     type Notification { label: String }
     type Message{ message:String }
     type Post{ value:String }
-    
-    type Answer{
-    formerId:ID!
-    value:Boolean!
+
+    type ChatMessage{
+        message: String!
+        user: User
     }
-    type Question { 
+
+    type BoolAnswer{
+        value:Boolean
+        student:String
+    }
+    type Question {
         formerId:ID!
         message:String!
-    } 
-     type User{
+    }
+    type User{
         id: ID!
         firstname: String!
         lastname: String!
@@ -26,22 +30,21 @@ export const type_Defs = gql`
         confirmPassword:String!
         groups:Group
     },
-    type Promotion{ 
+    type Promotion{
         id:ID!
         name:String!
-        fomrmationId:String!
+        formationId:String!
         promotionId:String!
         userId:String!
     },
-    type Group{ 
+    type Group{
         id:ID!
         name:String!
         isActive:Boolean
-        fomrmationId:String
-        userId:String
-        users:[User]
+        formationId:String
+        userId:[ID!]
     },
-    type Formation{ 
+    type Formation{
         id:ID!
         name:String!
     },
@@ -80,19 +83,22 @@ export const type_Defs = gql`
         updateUFormation(id:ID!,name:String):Formation
         deleteFormation(id:ID!):Formation
 
-        createGroup(name:String!,formationId:ID!, userId:ID!, isActive:Boolean):Group!,
+        createGroup(name:String!,formationId:ID!, userId:[ID!], isActive:Boolean):Group,
         deleteGroup(id:ID!):Group
 
         registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
-        pushNotification(label: String!): Notification 
-        
+        pushNotification(label: String!): Notification
+
         postQuestion(formerID:ID!, message:String!):Question
-        postAnswer(studentId:ID!, value:Boolean!):Answer
+        createMessage(roomId:Int!, message:String!):Boolean!
+        goodOrBad(studentId:ID!, value:Boolean):BoolAnswer
     }
-    type Subscription { 
-    newNotification: Notification
-    newQuestion:Message
+    type Subscription {
+        newNotification: Notification
+        newQuestion:Message
+        newBoolAnswer:BoolAnswer
+        newRoomMessage(roomId:Int!,):Message
     }
 `
