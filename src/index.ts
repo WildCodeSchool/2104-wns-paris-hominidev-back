@@ -64,7 +64,6 @@ dbConnect();
         ],
 
         context: ({req}: { req: Request }) => {
-            console.log(req.headers.authorization)
             const token = req.headers.authorization;
             if (token) {
                 let payload;
