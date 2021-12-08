@@ -22,37 +22,26 @@ export const GroupResolver = {
     },
     Mutation: {
         createGroup: async (parent: any, args: any) => {
-          const {name, isActive, formationId, userId} = args;
-
-          const existingGroup = await Group.findOne({name:name})
-          if(existingGroup){
-              console.log("ce groupe existe deja")
-          }
-          const group =new Group({
-            name: name,
-            formationId: formationId,
-            userId:userId,
-            isActive:isActive || false
-          })
-          return group.save()
-          .then ((result: { _doc: any; }) => {
-            return { ...result._doc }
-        })
-        .catch ((err: any) => {
-            console.error(err)
-        })
-        },/*
-        updateGroup: async (parent: any, args: any) => {
-            try{
-                const{id, name}=args;
-                return Group.findByIdAndUpdate(
-                    id,{name},
-                    {new: true}
-                )
-            }catch(error){
-                console.log("une erreur lors de la mise a jour", error);
+            try {
+                const {name, isActive, formationId, userId} = args;
+                const existingGroup = await Group.findOne({name:name})
+                if(existingGroup){
+                    const group =new Group({name: name,})
+                    return {name:` erreur: ${group.name} éxiste deja `}
+                }else{
+                    const group =new Group({
+                        name: name,
+                        formationId: formationId,
+                        userId:userId,
+                        isActive:isActive || false
+                    })
+                    return group.save()
+                }
+            }catch (e) {
+                console.error(e)
             }
-        },*/
+
+        },
         deleteGroup: async (parent: any, args: any) => {
             const{id}=args;
             Group.findByIdAndDelete(id, (err:Error, docs:any) => {
