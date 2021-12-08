@@ -1,4 +1,3 @@
-//const mongoose = require("mongoose");
 import { Schema, model, connect } from 'mongoose';
 import {IUser} from "../../interface/interface";
 
@@ -20,6 +19,4 @@ const userSchema = new Schema<IUser>({
     createAt: {type: Date, default: Date.now}
 });
 
-
-const UserModel = model("User", userSchema);
-module.exports = {UserModel, userSchema};
+module.exports = model("User", userSchema);
