@@ -4,6 +4,7 @@ import {withFilter} from "apollo-server";
 
 const {AuthenticationError} = require("apollo-server-express");
 import bcrypt from 'bcryptjs';
+import {Query} from "type-graphql";
 
 const User = require('../../models/user.model');
 const Formation = require('../../models/formation.model')
@@ -130,26 +131,23 @@ export const userResolver = {
                 if (user.role != "1") {
                     return {message: "vous n'etes pas habilité à poser une question "}
                 } else {
-                    pubsub.publish('FORMER_QUESTION', {newQuestion: {message: message}})
+                    await pubsub.publish('FORMER_QUESTION', {newQuestion: {message: message}})
                     return {message: message}
                 }
             } catch (e) {
                 console.log(e)
             }
         },
-        createMessage: async (parent: any, args: any, context: any) => {
+        createMessage: (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
-                try {
-                    await pubsub.publish(NEW_CHANNEL_MESSAGE, {
-                        userId: context.authenticatedUserEmail.userId,
-                        roomId: args.roomId,
-                        newRoomMessage: {message: args.message}
-                    })
-                    return true
-                } catch (e) {
-                    console.log(e)
-                    return false
+                const data ={
+                    userId: context.authenticatedUserEmail.userId,
+                    roomId: args.roomId,
+                    newRoomMessage: {message: args.message}
                 }
+                pubsub.publish(NEW_CHANNEL_MESSAGE, data)
+                    .then(() =>console.log("success") )
+                return data
             } else {
                 return {message: "Vous n'etes pas authentifier"}
             }
@@ -162,7 +160,7 @@ export const userResolver = {
                     return
                 } else {
                     const studentId = context.authenticatedUserEmail.userId
-                    pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
+                    await pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
                     return {value: value}
                 }
             } else {
@@ -190,12 +188,15 @@ export const userResolver = {
                 })
         },
         newRoomMessage: {
-            subscribe: withFilter(() => pubsub.asyncIterator(NEW_CHANNEL_MESSAGE),
-                (payload, args) => {
-                    console.log(payload)
-                    return payload.roomId == args.roomId
+            resolve:(payload:any)=>{
+                const data = {
+                    userId:payload.userId,
+                    message:payload.newRoomMessage.message,
+                    roomId:payload.roomId
                 }
-            )
+                return data
+            },
+            subscribe:()=> {return pubsub.asyncIterator(NEW_CHANNEL_MESSAGE)}
         }
     }
 }

@@ -9,7 +9,8 @@ export const type_Defs = gql`
 
     type ChatMessage{
         message: String!
-        user: User
+        userId: String
+        roomId:Int
     }
 
     type BoolAnswer{
@@ -92,13 +93,13 @@ export const type_Defs = gql`
         pushNotification(label: String!): Notification
 
         postQuestion(formerID:ID!, message:String!):Question
-        createMessage(roomId:Int!, message:String!):Boolean!
+        createMessage(roomId:Int!, message:String!):ChatMessage!
         goodOrBad(studentId:ID!, value:Boolean):BoolAnswer
     }
     type Subscription {
         newNotification: Notification
         newQuestion:Message
         newBoolAnswer:BoolAnswer
-        newRoomMessage(roomId:Int!,):Message
+        newRoomMessage(roomId:Int!):ChatMessage
     }
 `
