@@ -1,9 +1,10 @@
-import {IUser} from "../../../interface/interface";
+import {Imessage, IUser} from "../../../interface/interface";
 import {PubSub} from "graphql-subscriptions";
 import {withFilter} from "apollo-server";
 
 const {AuthenticationError} = require("apollo-server-express");
 import bcrypt from 'bcryptjs';
+import {Query} from "type-graphql";
 
 const User = require('../../models/user.model');
 const Formation = require('../../models/formation.model')
@@ -48,7 +49,6 @@ export const userResolver = {
             } else {
                 throw new AuthenticationError("Invalid auth");
             }
-
         },
         login: async (parent: any, args: any) => {
             const {email, password}: IUser = args;
@@ -61,12 +61,13 @@ export const userResolver = {
                 throw new Error("Password is incorrect")
             }
             const token = genToken({userId: user.id, email: user.email, role: user.role}, process.env.SECRET)
-            return {id: user.id, role: user.role, token: token}
+            return {id: user.id, role: user.role, groupId: user.groupId, token: token}
         },
     },
     Mutation: {
         registerUser: async (parent: any, args: any) => {
-            const {firstname, lastname, email, password, confirmPassword, role} = args;
+            const {firstname, lastname, email, password, confirmPassword, role, group} = args;
+            console.log(args.group)
             try {
                 const existingUser = await User.findOne({email: email})
                 if (existingUser) {
@@ -96,7 +97,8 @@ export const userResolver = {
                         lastname: lastname,
                         email: email,
                         password: hashedPassword,
-                        role: role
+                        role: role,
+                        groupId: group
                     });
                     const result = await user.save();
                     return {msg: "user created", ...result._doc, id: user.id}
@@ -121,35 +123,16 @@ export const userResolver = {
                 console.log(error)
             }
         },
-        postQuestion: async (parent: any, args: any, context: any) => {
-            try {
-                const question = args
-                const formerID = question.formerID
-                const message = question.message
-                const user = await User.findById(formerID);
-                if (user.role != "1") {
-                    return {message: "vous n'etes pas habilité à poser une question "}
-                } else {
-                    pubsub.publish('FORMER_QUESTION', {newQuestion: {message: message}})
-                    return {message: message}
-                }
-            } catch (e) {
-                console.log(e)
-            }
-        },
-        createMessage: async (parent: any, args: any, context: any) => {
+        createMessage: (parent: any, args: any, context: any) => {
             if (context.authenticatedUserEmail) {
-                try {
-                    await pubsub.publish(NEW_CHANNEL_MESSAGE, {
-                        userId: context.authenticatedUserEmail.userId,
-                        roomId: args.roomId,
-                        newRoomMessage: {message: args.message}
-                    })
-                    return true
-                } catch (e) {
-                    console.log(e)
-                    return false
+                const data = {
+                    userId: context.authenticatedUserEmail.userId,
+                    roomId: args.roomId,
+                    newRoomMessage: {message: args.message}
                 }
+                pubsub.publish(NEW_CHANNEL_MESSAGE, data)
+                    .then(() => console.log("success"))
+                return data
             } else {
                 return {message: "Vous n'etes pas authentifier"}
             }
@@ -162,11 +145,20 @@ export const userResolver = {
                     return
                 } else {
                     const studentId = context.authenticatedUserEmail.userId
-                    pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
+                    await pubsub.publish('STUDENT_BOOL_ANSWER', {newBoolAnswer: {value: value, student: studentId}})
                     return {value: value}
                 }
             } else {
                 return {message: "Vous n'etes pas authentifier"}
+            }
+        },
+        postMessage: async (parent: any, args: Imessage, context: any) => {
+            if (context.authenticatedUserEmail) {
+                let data: Imessage
+                data = args
+                data && await pubsub.publish('MESSAGE', {message: data})
+                console.log(data)
+                return data
             }
         }
     },
@@ -177,12 +169,6 @@ export const userResolver = {
                 return pubsub.asyncIterator('FORMER_NOTIFICATION')
             }
         },
-        newQuestion: {
-            subscribe: withFilter(() => pubsub.asyncIterator('FORMER_QUESTION'),
-                (payload, variables, context, info) => {
-                    return context.user.role == 1;
-                })
-        },
         newBoolAnswer: {
             subscribe: withFilter(() => pubsub.asyncIterator('STUDENT_BOOL_ANSWER'),
                 (payload, variables, context, info) => {
@@ -190,12 +176,31 @@ export const userResolver = {
                 })
         },
         newRoomMessage: {
-            subscribe: withFilter(() => pubsub.asyncIterator(NEW_CHANNEL_MESSAGE),
-                (payload, args) => {
-                    console.log(payload)
-                    return payload.roomId == args.roomId
+            resolve: (payload: any) => {
+                const data = {
+                    userId: payload.userId,
+                    message: payload.newRoomMessage.message,
+                    roomId: payload.roomId
                 }
-            )
+                return data
+            },
+            subscribe: () => {
+                return pubsub.asyncIterator(NEW_CHANNEL_MESSAGE)
+            }
+        },
+        message:{
+            resolve:(payload:Imessage)=>{
+               return {
+                       type:payload.message.type,
+                       tab:payload.message.tab,
+                       url:payload.message.url,
+                       group:payload.message.group,
+                       data:payload.message.data
+               }
+            },
+            subscribe:()=>{
+              return pubsub.asyncIterator('MESSAGE')
+            }
         }
     }
 }
