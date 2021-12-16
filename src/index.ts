@@ -64,7 +64,6 @@ dbConnect();
         ],
 
         context: ({req}: { req: Request }) => {
-            console.log(req.headers.authorization)
             const token = req.headers.authorization;
             if (token) {
                 let payload;
@@ -72,7 +71,7 @@ dbConnect();
                     payload = jwt.verify(token, process.env.SECRET);
                     return {authenticatedUserEmail: payload};
                 } catch (err) {
-                    console.log(err)
+                    console.log("token expired")
                 }
             }
         }
