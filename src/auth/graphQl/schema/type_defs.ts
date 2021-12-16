@@ -4,7 +4,21 @@ import {IUser} from "../../../interface/interface";
 export const type_Defs = gql`
     scalar Date
     type Notification { label: String }
-    type Message{ message:String }
+    
+    input inputMessage{
+        type: String,
+        tab: String,
+        url: String,
+        group: ID,
+        data: String
+    }
+    type Message{
+        type: String,
+        tab: String,
+        url: String,
+        group: ID,
+        data: String
+    }
     type Post{ value:String }
 
     type ChatMessage{
@@ -29,7 +43,7 @@ export const type_Defs = gql`
         role:String!
         password:String
         confirmPassword:String!
-        groups:Group
+        group:Group
     },
     type Promotion{
         id:ID!
@@ -53,10 +67,7 @@ export const type_Defs = gql`
         id:ID!
         token:String!
         role:String!
-        tokenExpiration:Int!
-        firstname: String!
-        lastname: String!
-        email:String!
+        groupId:ID
     }
     input userInput{
         firstname: String!
@@ -87,19 +98,25 @@ export const type_Defs = gql`
         createGroup(name:String!,formationId:ID!, userId:[ID!], isActive:Boolean):Group,
         deleteGroup(id:ID!):Group
 
-        registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!): User!
+        registerUser(firstname:String!,lastname:String!,email: String!, password: String!, confirmPassword:String!,role:String!, group:ID!): User!
         updateUser(userId: ID!, userInput: userInput): User
         deleteUser(userId: ID!): User
         pushNotification(label: String!): Notification
-
-        postQuestion(formerID:ID!, message:String!):Question
+        
         createMessage(roomId:Int!, message:String!):ChatMessage!
         goodOrBad(studentId:ID!, value:Boolean):BoolAnswer
+        
+        postMessage(    
+            type: String,
+            tab: String,
+            url: String,
+            group: ID,
+            data: String):Message
     }
     type Subscription {
         newNotification: Notification
-        newQuestion:Message
         newBoolAnswer:BoolAnswer
         newRoomMessage(roomId:Int!):ChatMessage
+        message(message:inputMessage):Message
     }
 `

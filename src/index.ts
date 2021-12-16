@@ -71,7 +71,7 @@ dbConnect();
                     payload = jwt.verify(token, process.env.SECRET);
                     return {authenticatedUserEmail: payload};
                 } catch (err) {
-                    console.log(err)
+                    console.log("token expired")
                 }
             }
         }

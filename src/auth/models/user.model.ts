@@ -1,4 +1,4 @@
-import { Schema, model, connect } from 'mongoose';
+import {Schema, model, connect} from 'mongoose';
 import {IUser} from "../../interface/interface";
 
 enum role {
@@ -16,6 +16,7 @@ const userSchema = new Schema<IUser>({
     password: {type: String},
     avatar: String,
     role: {type: role, default: role.student},
+    groupId: {type: Schema.Types.ObjectId, ref: "Group"},
     createAt: {type: Date, default: Date.now}
 });
 
